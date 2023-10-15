@@ -75,7 +75,13 @@ header  |  squence number  |  data length  |  payload
          - if during timer message receivedесли
             - stop the timer
             - push message into the output queue
-   - read next message from udp
+   - continue
 
 - On the Server side:
    - sending messages incremening sequence number
+   - push each into the cache: {key: squence number, value: message}
+   - if cache length exceeded, drop first message
+   - if resend requested
+      - get requested message from the cache
+      - send it
+   - continue 
