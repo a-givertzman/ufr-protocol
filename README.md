@@ -5,47 +5,70 @@ Over UDP Fast Reliable protocol
 
 **1. Test UDP:**
 
-message format:
+- message format:
+
 header  |  squence number  |  data length  |  payload
 --------|------------------|---------------|-------------------
 1 byte  |  2 bytes         |  2 bytes      |  up to 56 536 bytes
 
-- send messages directelly over UDP
-- receive messages
-- count a number of lost messages using "squence number"
-- measure elapsed time
-- measure average speed
+- test content
+   - send messages directelly over UDP
+   - receive messages
+   - count a number of lost messages using "squence number"
+   - measure elapsed time
+   - measure average speed
+
+- results
+   - sent bytes: ...
+   - sent messages: ...
+   - received bytes: ...
+   - received messages: ...
 
 **2. Test TCP:**
 
-- send messages directelly over UDP
-- receive messages
-- count a number of lost messages using "squence number"
-- measure elapsed time
-- measure average speed
+- message format:
 
-- пакет будет содержать только payload: 56 536 bytes
+|  payload             |
+|----------------------|
+|  up to 56 536 bytes  |
 
-- так же замерим скорость и среднюю скорость за весь перод передачи
+- test content
+   - send messages directelly over TCP
+   - receive messages
+   - measure elapsed time
+   - measure average speed
+
+- results
+   - sent bytes: ...
+   - sent messages: ...
+   - received bytes: ...
+   - received messages: ...
+
+**3. Conclusion**
+
+|
+| sent bytes: ...
+| sent messages: ...
+| received bytes: ...
+| received messages: ...
 
 
-если в результате тестов будет понятно что UDP существенно выигрываети, будет смысл пытаться переходить
+## Implementation
 
-и так же можно попробовать реализовать простой вариант для передачи Point-ов просто для тестирования пока...
+- Selected message format:
 
-допустим посылка такая: 
-header: 1 byte
-squence number: 2 bytes
-data length: 2 bytes
-payload: up to 56 536 bytes
+header  |  squence number  |  data length  |  payload
+--------|------------------|---------------|-------------------
+1 byte  |  2 bytes         |  2 bytes      |  up to 56 536 bytes
 
-на стороне клиента:
-- складываем все полученные посылки в очередь, из нее пользователь получает приходящие данные
+- On the Client side:
+   - put all received messages into the output queue
 
-- если squence number пропущен, (можно настоить количество повторений при неудаче)
-   - запускается таймер, 
-      - если таймер истекает,
-         - посылка считается потерянной - отправляем запрос серверу на повторную отправку этой посылки 
-      - если таймер не истек, а посылка дошла, просто идем дальше
+   - если squence number пропущен, (можно настоить количество повторений при неудаче)
+      - запускается таймер, 
+         - если таймер истекает,
+            - посылка считается потерянной - отправляем запрос серверу на повторную отправку этой посылки 
+         - если таймер не истек, а посылка дошла, просто идем дальше
 
-на стороне сервера:
+- On the Server side:
+   - sending messages incremening sequence number
