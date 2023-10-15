@@ -46,11 +46,14 @@ header  |  squence number  |  data length  |  payload
 
 **3. Conclusion**
 
-|
-| sent bytes: ...
-| sent messages: ...
-| received bytes: ...
-| received messages: ...
+ test metric             | UDP                | TCP                
+-------------------------|--------------------|--------------------
+ sent bytes              | ...                | ...
+ sent messages           | ...                | ...
+ received bytes          | ...                | ...
+ received messages       | ...                | ...
+ elapsed time, sec       | ...                | ...
+ everage speed, KB/sec   | ...                | ...
 
 
 ## Implementation
@@ -62,13 +65,17 @@ header  |  squence number  |  data length  |  payload
 1 byte  |  2 bytes         |  2 bytes      |  up to 56 536 bytes
 
 - On the Client side:
-   - put all received messages into the output queue
-
-   - если squence number пропущен, (можно настоить количество повторений при неудаче)
-      - запускается таймер, 
-         - если таймер истекает,
-            - посылка считается потерянной - отправляем запрос серверу на повторную отправку этой посылки 
-         - если таймер не истек, а посылка дошла, просто идем дальше
+   - read messages from UDP
+   - push each received messages into the output queue
+   - if squence number missed (configurable number of resend requests, default 3)
+      - start timer (configurable, default 100 ms)
+         - if timer is over 
+            - message is missed
+               - requesting resend
+         - if during timer message receivedесли
+            - stop the timer
+            - push message into the output queue
+   - read next message from udp
 
 - On the Server side:
    - sending messages incremening sequence number
